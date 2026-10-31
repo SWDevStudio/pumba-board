@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-i18n="meta.title">Pumba Board - канбан-доска для задач ИИ-агентов</title>
+<meta name="description" content="Pumba Board: канбан-доска в терминале для задач ИИ-агентов. Карточки, колонки и правила лежат в папке .pumba рядом с кодом. Работает с Claude Code, Codex, Cursor, Copilot и OpenCode." data-i18n-attr="content:meta.desc">
+<meta name="theme-color" content="#211E1B">
+<link rel="icon" type="image/svg+xml" href="assets/pumba.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main" data-i18n="skip">К содержимому</a>
+
+<header class="top">
+  <div class="wrap top-row">
+    <a class="brand" href="#top" aria-label="Pumba Board">
+      <img src="assets/pumba.svg" width="34" height="36" alt="">
+      <span class="brand-name">PUMBA<span class="dim">board</span></span>
+    </a>
+    <div class="top-tools">
+      <div class="lang" role="group" aria-label="Язык" data-i18n-attr="aria-label:lang.aria">
+        <button type="button" data-lang="ru" aria-pressed="true">RU</button>
+        <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      </div>
+      <a class="btn btn-sm" href="https://github.com/SWDevStudio/pumba-board" rel="noopener"><span class="ico" data-icon="star" aria-hidden="true"></span><span data-i18n="gh">GitHub</span></a>
+    </div>
+  </div>
+  <nav class="wrap nav" aria-label="Разделы" data-i18n-attr="aria-label:nav.aria">
+    <a href="#about" data-i18n="nav.about">Что это</a>
+    <a href="#demo" data-i18n="nav.demo">Доска</a>
+    <a href="#start" data-i18n="nav.start">Старт</a>
+    <a href="#board" data-i18n="nav.board">Колонки</a>
+    <a href="#cards" data-i18n="nav.cards">Карточки</a>
+    <a href="#rules" data-i18n="nav.rules">Правила</a>
+    <a href="#agent" data-i18n="nav.agent">Агент</a>
+    <a href="#tools" data-i18n="nav.tools">Инструменты</a>
+    <a href="#keys" data-i18n="nav.keys">Клавиши</a>
+  </nav>
+</header>
+
+<main id="main">
+
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div class="hero-logo">
+      <div class="sticker" aria-hidden="true">proto</div>
+      <img class="logo" src="assets/pumba.svg" width="272" height="288" alt="Пиксельный кабан в каске и шарфе, на спине у него маленькая канбан-доска" data-i18n-attr="alt:hero.logo">
+    </div>
+    <div class="hero-text">
+      <h1>PUMBA BOARD<span class="cursor" aria-hidden="true"></span></h1>
+      <p class="tagline" data-i18n="hero.tag">Канбан-доска в терминале для задач ИИ-агентов</p>
+      <p class="lead" data-i18n-html="hero.lead">Вы ведёте задачи на доске, а агент берёт карточку, проходит по колонкам и двигает её сам. Всё хранится в папке <code>.pumba/</code> рядом с кодом.</p>
+      <div class="cmd cmd-hero"><code>cargo install --path .</code><button class="copy" type="button" data-copy="cargo install --path ." aria-label="Копировать команду" data-i18n-attr="aria-label:copy.aria"><span class="ico" data-icon="card" aria-hidden="true"></span><span data-i18n="copy">Копировать</span></button></div>
+      <div class="actions">
+        <a class="btn btn-main" href="#start"><span class="ico" data-icon="arrow" aria-hidden="true"></span><span data-i18n="hero.start">Быстрый старт</span></a>
+        <a class="btn" href="https://github.com/SWDevStudio/pumba-board" rel="noopener"><span class="ico" data-icon="star" aria-hidden="true"></span><span data-i18n="gh">GitHub</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="about">
+  <div class="wrap">
+    <h2><span class="ico" data-icon="star" aria-hidden="true"></span><span data-i18n="about.h">Что это</span></h2>
+    <p class="sec-lead" data-i18n-html="about.p">Pumba Board - программа для терминала на Rust, бинарник называется <code>pumba</code>. Вы заводите карточки и настраиваете колонки, а ИИ-агент выполняет работу по этим карточкам.</p>
+    <div class="grid grid-2">
+      <article class="panel"><h3><span class="ico" data-icon="card" aria-hidden="true"></span><span data-i18n="about.f1.h">Всё в одной папке</span></h3><p data-i18n-html="about.f1.p">Колонки и правила лежат в <code>.pumba/board.json</code>, карточки в <code>.pumba/tasks/</code>, инструкции для агентов в <code>.pumba/AGENTS.md</code>. Это обычные файлы, их видно в git.</p></article>
+      <article class="panel"><h3><span class="ico" data-icon="gear" aria-hidden="true"></span><span data-i18n="about.f2.h">Порядок задаёте вы</span></h3><p data-i18n="about.f2.p">У каждой колонки три части правила: «Перед работой», «Работа», «После работы». Что делать с карточкой, решает доска, а не программа.</p></article>
+      <article class="panel"><h3><span class="ico" data-icon="column" aria-hidden="true"></span><span data-i18n="about.f3.h">Пять инструментов</span></h3><p data-i18n="about.f3.p">Claude Code, Codex, Cursor, Copilot и OpenCode. Одна команда ставит им агентов и скиллы.</p></article>
+      <article class="panel"><h3><span class="ico" data-icon="arrow" aria-hidden="true"></span><span data-i18n="about.f4.h">След остаётся</span></h3><p data-i18n="about.f4.p">Агент записывает краткие решения в раздел «Ход работы» карточки. Удалённые карточки уходят в корзину, файл остаётся на диске.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="demo">
+  <div class="wrap">
+    <h2><span class="ico" data-icon="column" aria-hidden="true"></span><span data-i18n="demo.h">Как выглядит доска</span></h2>
+    <div class="term" role="img" aria-label="Макет канбан-доски: пять колонок с карточками" data-i18n-attr="aria-label:demo.aria">
+      <div class="term-bar" aria-hidden="true"><span>pumba</span><span class="dim">my-project/.pumba</span></div>
+      <div class="board" aria-hidden="true">
+        <div class="kcol" style="--c:#81738A;--ct:#A596AE">
+          <div class="kcol-h">● <span data-i18n="col.backlog">Бэклог</span> <span class="n">2</span></div>
+          <div class="kcard epic"><div class="kc-top"><span class="kc-mark pink">◆</span><span class="kc-id">E-002</span></div><div class="kc-title" data-i18n="card.e2">Оплата заказа</div><div class="kc-meta"><span class="prog"><i></i><i class="off"></i><i class="off"></i><i class="off"></i></span><span class="g">0/3</span></div></div>
+          <div class="kcard"><div class="kc-top"><span class="kc-mark">▪</span><span class="kc-id">T-007</span></div><div class="kc-title" data-i18n="card.t7">Экспорт отчёта в CSV</div><div class="kc-meta"><span class="r">⊘ T-005</span><span class="g">S2</span><span class="dim" data-i18n="demo.hidden">скрыта</span></div></div>
+        </div>
+        <div class="kcol" style="--c:#F09138;--ct:#F09138">
+          <div class="kcol-h">● <span data-i18n="col.progress">В работе</span> <span class="n">2</span></div>
+          <div class="kcard epic"><div class="kc-top"><span class="kc-mark pink">◆</span><span class="kc-id">E-001</span></div><div class="kc-title" data-i18n="card.e1">Вход в систему</div><div class="kc-meta"><span class="prog"><i></i><i></i><i class="off"></i><i class="off"></i></span><span class="g">2/4</span></div></div>
+          <div class="kcard sel"><div class="kc-top"><span class="kc-mark">▪</span><span class="kc-id">T-005</span><span class="kc-agent">opus*high</span></div><div class="kc-title" data-i18n="card.t5">Форма входа</div><div class="kc-meta"><span class="g">S1</span><span class="p">↳ E-001</span><span class="o">→ T-007</span></div></div>
+        </div>
+        <div class="kcol" style="--c:#B45B69;--ct:#D4808E">
+          <div class="kcol-h">● <span data-i18n="col.review">На ревью</span> <span class="n">1</span></div>
+          <div class="kcard"><div class="kc-top"><span class="kc-mark">▪</span><span class="kc-id">T-004</span><span class="kc-agent">sonnet</span></div><div class="kc-title" data-i18n="card.t4">Проверка e-mail на сервере</div><div class="kc-meta"><span class="g">S1</span><span class="p">↳ E-001</span></div></div>
+        </div>
+        <div class="kcol" style="--c:#D84233;--ct:#EC6A5A">
+          <div class="kcol-h">● <span data-i18n="col.ondev">Ждёт разработчика</span> <span class="n">1</span></div>
+          <div class="kcard"><div class="kc-top"><span class="kc-mark">▪</span><span class="kc-id">T-006</span></div><div class="kc-title" data-i18n="card.t6">Выбор платёжного провайдера</div><div class="kc-meta"><span class="p">↳ E-002</span></div></div>
+        </div>
+        <div class="kcol" style="--c:#B4AF4C;--ct:#B4AF4C">
+          <div class="kcol-h">● <span data-i18n="col.done">Готово</span> <span class="n">2</span></div>
+          <div class="kcard"><div class="kc-top"><span class="kc-mark">▪</span><span class="kc-id">T-002</span></div><div class="kc-title" data-i18n="card.t2">Подключить базу данных</div><div class="kc-meta"><span class="g">S1</span><span class="p">↳ E-001</span></div></div>
+          <div class="kcard"><div class="kc-top"><span class="kc-mark">▪</span><span class="kc-id">T-001</span></div><div class="kc-title" data-i18n="card.t1">Каркас проекта</div><div class="kc-meta"><span class="g">S1</span><span class="p">↳ E-001</span></div></div>
+        </div>
+      </div>
+      <div class="term-foot" aria-hidden="true"><span><b>h/l</b> col</span><span><b>j/k</b> card</span><span><b>H/L</b> move</span><span><b>n</b> task</span><span><b>N</b> epic</span><span><b>?</b> help</span><span><b>q</b> quit</span></div>
+    </div>
+    <p class="legend" data-i18n-html="demo.legend"><b>◆</b> эпик, <b>▪</b> задача, <b>S1</b> спринт, <b>↳ E-001</b> эпик-родитель, <b>⊘ T-005</b> заблокирована, <b>→ T-007</b> ждут эту карточку.</p>
+    <p class="note" data-i18n="demo.note">Макет в стиле программы. Настоящая доска работает в терминале. Интерфейс программы и названия колонок по умолчанию русские.</p>
+  </div>
+</section>
+
+<section class="sec" id="start">
+  <div class="wrap">
+    <h2><span class="ico" data-icon="arrow" aria-hidden="true"></span><span data-i18n="start.h">Быстрый старт</span></h2>
+    <ol class="steps">
+      <li>
+        <h3 data-i18n="start.s1">Установите из исходников</h3>
+        <div class="cmd"><code>cargo install --path .</code><button class="copy" type="button" data-copy="cargo install --path ." aria-label="Копировать команду" data-i18n-attr="aria-label:copy.aria"><span class="ico" data-icon="card" aria-hidden="true"></span><span data-i18n="copy">Копировать</span></button></div>
+        <p class="note" data-i18n-html="start.s1n">Нужен Rust. Крейт называется <code>pumba-board</code>, бинарник <code>pumba</code>.</p>
+      </li>
+      <li>
+        <h3 data-i18n="start.s2">Откройте доску в папке проекта</h3>
+        <div class="cmd"><code>pumba</code><button class="copy" type="button" data-copy="pumba" aria-label="Копировать команду" data-i18n-attr="aria-label:copy.aria"><span class="ico" data-icon="card" aria-hidden="true"></span><span data-i18n="copy">Копировать</span></button></div>
+        <p class="note" data-i18n-html="start.s2n">Если <code>.pumba/</code> нет, программа предложит её создать и выбрать инструменты для агентов.</p>
+      </li>
+      <li>
+        <h3 data-i18n="start.s3">Или создайте доску из командной строки</h3>
+        <div class="cmd"><code>pumba init</code><button class="copy" type="button" data-copy="pumba init" aria-label="Копировать команду" data-i18n-attr="aria-label:copy.aria"><span class="ico" data-icon="card" aria-hidden="true"></span><span data-i18n="copy">Копировать</span></button></div>
+        <p class="note" data-i18n-html="start.s3n">Создаёт <code>.pumba/</code> и ставит агентов и скиллы. Флаг <code>--no-agents</code> создаёт только папку.</p>
+      </li>
+      <li>
+        <h3 data-i18n="start.s4">Поставьте агентов для нужных инструментов</h3>
+        <div class="cmd"><code>pumba install --tools claude,codex,cursor,copilot,opencode</code><button class="copy" type="button" data-copy="pumba install --tools claude,codex,cursor,copilot,opencode" aria-label="Копировать команду" data-i18n-attr="aria-label:copy.aria"><span class="ico" data-icon="card" aria-hidden="true"></span><span data-i18n="copy">Копировать</span></button></div>
+        <p class="note" data-i18n-html="start.s4n">Существующие файлы не перезаписываются, для этого нужен <code>--force</code>. Вместо списка можно написать <code>all</code>.</p>
+      </li>
+      <li>
+        <h3 data-i18n="start.s5">Скажите агенту, что делать</h3>
+        <div class="cmd"><code>выполни задачу T-001</code><button class="copy" type="button" data-copy="выполни задачу T-001" aria-label="Копировать команду" data-i18n-attr="aria-label:copy.aria"><span class="ico" data-icon="card" aria-hidden="true"></span><span data-i18n="copy">Копировать</span></button></div>
+        <div class="cmd"><code>/pumba-task T-001</code><button class="copy" type="button" data-copy="/pumba-task T-001" aria-label="Копировать команду" data-i18n-attr="aria-label:copy.aria"><span class="ico" data-icon="card" aria-hidden="true"></span><span data-i18n="copy">Копировать</span></button></div>
+        <p class="note" data-i18n-html="start.s5n">Задачу берёт скилл <code>pumba-task</code>. Можно сказать и «возьми эпик E-001».</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="sec" id="board">
+  <div class="wrap">
+    <h2><span class="ico" data-icon="column" aria-hidden="true"></span><span data-i18n="board.h">Как устроена доска</span></h2>
+    <p class="sec-lead" data-i18n="board.p">Колонки по умолчанию образуют цепочку. Агент ведёт карточку от колонки к колонке, пока не дойдёт до колонки, где нужен человек.</p>
+    <ol class="chain" aria-label="Цепочка колонок по умолчанию" data-i18n-attr="aria-label:board.chain">
+      <li style="--c:#81738A;--ct:#A596AE">● <span data-i18n="col.backlog">Бэклог</span></li>
+      <li class="ar" aria-hidden="true"><span class="ico" data-icon="arrow"></span></li>
+      <li style="--c:#F09138;--ct:#F09138">● <span data-i18n="col.progress">В работе</span></li>
+      <li class="ar" aria-hidden="true"><span class="ico" data-icon="arrow"></span></li>
+      <li style="--c:#B45B69;--ct:#D4808E">● <span data-i18n="col.review">На ревью</span></li>
+      <li class="ar" aria-hidden="true"><span class="ico" data-icon="arrow"></span></li>
+      <li style="--c:#B4AF4C;--ct:#B4AF4C">● <span data-i18n="col.done">Готово</span></li>
+      <li class="side" style="--c:#D84233;--ct:#EC6A5A">● <span data-i18n="col.ondev">Ждёт разработчика</span></li>
+    </ol>
+    <p class="note" data-i18n="board.ondev">Неудача после всех попыток уводит карточку в «Ждёт разработчика».</p>
+    <h3 class="sub" data-i18n="board.parts">Три части правила колонки</h3>
+    <div class="grid grid-3">
+      <article class="panel part"><span class="num">1</span><h3 data-i18n="board.before.h">Перед работой</h3><p data-i18n="board.before.p">Условия старта: что проверить, о чём спросить, когда остановиться. Агент выполняет это раньше всего.</p></article>
+      <article class="panel part"><span class="num">2</span><h3 data-i18n="board.rule.h">Работа</h3><p data-i18n="board.rule.p">Что делает исполнитель колонки, пока карточка в ней: например, план, тесты и реализация.</p></article>
+      <article class="panel part"><span class="num">3</span><h3 data-i18n="board.after.h">После работы</h3><p data-i18n="board.after.p">Как проверить результат, что делать при неудаче и куда перенести карточку.</p></article>
+    </div>
+    <p class="sec-lead" data-i18n-html="board.fields">Кроме правила, у колонки есть <b>агент</b> (субагент, который делает работу), <b>следующая колонка</b> (после успеха), цвет и название. Первая и последняя колонки закреплены: их нельзя двигать и удалять. Новые колонки встают перед последней.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th scope="col" data-i18n="tbl.col">Колонка</th><th scope="col" data-i18n="tbl.what">Что происходит</th></tr></thead>
+        <tbody>
+          <tr><th scope="row" style="--ct:#A596AE" class="ct" data-i18n="col.backlog">Бэклог</th><td data-i18n="board.r1">Агент спрашивает: «брать в работу?». После «да» карточка идёт в «В работе».</td></tr>
+          <tr><th scope="row" style="--ct:#F09138" class="ct" data-i18n="col.progress">В работе</th><td data-i18n-html="board.r2">Исполнитель <code>pumba-worker</code>: план, тесты, реализация, проверки. Дальше «На ревью».</td></tr>
+          <tr><th scope="row" style="--ct:#D4808E" class="ct" data-i18n="col.review">На ревью</th><td data-i18n-html="board.r3">Исполнитель <code>pumba-reviewer</code>: приёмка и ревью. После одобрения один коммит и «Готово».</td></tr>
+          <tr><th scope="row" style="--ct:#EC6A5A" class="ct" data-i18n="col.ondev">Ждёт разработчика</th><td data-i18n="board.r4">Агент остановился и ждёт решения человека. Решение есть - карточка возвращается в «В работе».</td></tr>
+          <tr><th scope="row" style="--ct:#B4AF4C" class="ct" data-i18n="col.done">Готово</th><td data-i18n="board.r5">Только последняя колонка снимает блокировку с зависимых карточек.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="cards">
+  <div class="wrap">
+    <h2><span class="ico" data-icon="card" aria-hidden="true"></span><span data-i18n="cards.h">Карточки</span></h2>
+    <p class="sec-lead" data-i18n-html="cards.p">Карточка - один файл <code>.pumba/tasks/&lt;ID&gt;.md</code>: заголовок в frontmatter и описание для агента в Markdown. Номер совпадает с именем файла.</p>
+    <div class="cards-grid">
+      <div class="grid grid-2 tight">
+        <article class="panel"><h3 data-i18n="cards.c1.h">Эпик и задача</h3><p data-i18n-html="cards.c1.p">Эпик (<code>E-001</code>) собирает задачи (<code>T-001</code>). Связь хранится в поле <code>parent</code> задачи, у эпика на доске виден прогресс.</p></article>
+        <article class="panel"><h3 data-i18n="cards.c2.h">Модель и уровень размышления</h3><p data-i18n-html="cards.c2.p">Подсказка агенту, какую модель и какой уровень рассуждений взять. Списки настраиваются клавишей <kbd>M</kbd>.</p></article>
+        <article class="panel"><h3 data-i18n="cards.c3.h">Спринт</h3><p data-i18n-html="cards.c3.p"><kbd>p</kbd> добавляет карточку в текущий спринт, <kbd>s</kbd> показывает только его, <kbd>]</kbd> начинает следующий: незавершённые карточки перейдут в него.</p></article>
+        <article class="panel"><h3 data-i18n="cards.c4.h">Зависимости и «Блокирует»</h3><p data-i18n="cards.c4.p">Поле «Зависит от» и обратное «Блокирует». Пока зависимости не в последней колонке, карточка заблокирована, и агент откажется её брать.</p></article>
+        <article class="panel"><h3 data-i18n="cards.c5.h">Скрытие</h3><p data-i18n-html="cards.c5.p"><kbd>x</kbd> прячет карточку с доски, <kbd>v</kbd> показывает скрытые.</p></article>
+        <article class="panel"><h3 data-i18n="cards.c6.h">Корзина вместо удаления</h3><p data-i18n-html="cards.c6.p"><kbd>d</kbd> отправляет карточку в корзину: файл остаётся на диске. Восстановить можно в корзине (<kbd>B</kbd>). Её номер больше не используется.</p></article>
+      </div>
+      <figure class="code-fig">
+        <figcaption><span data-i18n="cards.code">Пример файла карточки</span><span class="dim"> .pumba/tasks/T-014.md</span></figcaption>
+<pre class="code" tabindex="0"><span class="sep">---</span>
+<span class="key">id:</span> T-014
+<span class="key">type:</span> task
+<span class="key">title:</span> Кнопка выхода в шапке
+<span class="key">column:</span> backlog
+<span class="key">parent:</span> E-003
+<span class="key">model:</span> default
+<span class="key">effort:</span> default
+<span class="key">sprint:</span> 2
+<span class="key">hidden:</span> false
+<span class="key">order:</span> 5
+<span class="key">depends:</span> T-011, T-012
+<span class="sep">---</span>
+
+Добавить кнопку «Выйти» в шапку.
+
+Где: <span class="at">@src/components/header.tsx</span>
+
+Критерии приёмки:
+- кнопка видна только вошедшему;
+- нажатие завершает сессию.
+
+<span class="key">## Ход работы</span>
+- 2026-10-31 14:05 «В работе» → «На ревью»</pre>
+      </figure>
+    </div>
+    <p class="note" data-i18n-html="cards.at">Ссылки <code>@путь</code> в описании подставляются подсказкой. Агент прочитает эти файлы перед работой.</p>
+  </div>
+</section>
+
+<section class="sec" id="rules">
+  <div class="wrap">
+    <h2><span class="ico" data-icon="gear" aria-hidden="true"></span><span data-i18n="rules.h">Правила проекта</span></h2>
+    <p class="sec-lead" data-i18n-html="rules.p">Клавиша <kbd>P</kbd> открывает правила: шесть переключателей и поле для своих правил в Markdown. Из них и из правил колонок программа собирает <code>.pumba/AGENTS.md</code> и переписывает файл при каждом изменении. Агент читает его первым.</p>
+    <dl class="rules">
+      <div class="panel"><dt data-i18n="rules.r1">Стиль коммитов</dt><dd data-i18n-html="rules.r1o"><b>Conventional Commits</b>, Gitmoji, префикс с ID задачи, свободный формат</dd></div>
+      <div class="panel"><dt data-i18n="rules.r2">Модель ветвления</dt><dd data-i18n-html="rules.r2o">GitHub Flow, Git Flow, Trunk-based, <b>ветка на задачу</b></dd></div>
+      <div class="panel"><dt data-i18n="rules.r3">Стратегия слияния</dt><dd data-i18n-html="rules.r3o"><b>Squash</b>, merge-коммит, rebase</dd></div>
+      <div class="panel"><dt data-i18n="rules.r4">Тестирование</dt><dd data-i18n-html="rules.r4o"><b>Тесты обязательны</b>, TDD, тесты по желанию</dd></div>
+      <div class="panel"><dt data-i18n="rules.r5">Автономность</dt><dd data-i18n-html="rules.r5o"><b>Сначала спрашивать</b> перед крупными изменениями, работать автономно</dd></div>
+      <div class="panel"><dt data-i18n="rules.r6">Обновление доски</dt><dd data-i18n-html="rules.r6o"><b>Агент двигает задачи</b>, вручную (агент предлагает, вы отвечаете)</dd></div>
+    </dl>
+    <p class="note" data-i18n="rules.note">Жирным выделен вариант по умолчанию.</p>
+  </div>
+</section>
+
+<section class="sec" id="agent">
+  <div class="wrap">
+    <h2><span class="ico" data-icon="star" aria-hidden="true"></span><span data-i18n="agent.h">Как работает агент</span></h2>
+    <p class="sec-lead" data-i18n-html="agent.p">Агенту хватает фразы «выполни задачу T-001». Дальше работает скилл <code>pumba-task</code>: он ведёт карточку по колонкам.</p>
+    <ol class="flow">
+      <li><span class="num">1</span><div><h3 data-i18n="agent.s1.h">Принимает карточку</h3><p data-i18n="agent.s1.p">Читает файл и проверяет зависимости. Если хоть одна не в последней колонке, агент отказывается и называет блокирующие карточки.</p></div></li>
+      <li><span class="num">2</span><div><h3 data-i18n="agent.s2.h">Читает правила</h3><p data-i18n-html="agent.s2.p">Берёт «Правила проекта» из <code>AGENTS.md</code> и правило колонки карточки из <code>board.json</code>.</p></div></li>
+      <li><span class="num">3</span><div><h3 data-i18n="agent.s3.h">Перед работой</h3><p data-i18n="agent.s3.p">Проверяет условия, предупреждает, спрашивает. Правило велит остановиться - агент останавливается.</p></div></li>
+      <li><span class="num">4</span><div><h3 data-i18n="agent.s4.h">Работа</h3><p data-i18n-html="agent.s4.p">Запускает субагента колонки, например <code>pumba-worker</code>, или делает работу сам, если исполнителя нет.</p></div></li>
+      <li><span class="num">5</span><div><h3 data-i18n="agent.s5.h">После работы</h3><p data-i18n="agent.s5.p">Проверяет результат: запускает проверки, читает итог исполнителя. При неудаче повторяет на модели выше (haiku, sonnet, opus), потом зовёт человека.</p></div></li>
+      <li><span class="num">6</span><div><h3 data-i18n="agent.s6.h">Двигает карточку</h3><p data-i18n-html="agent.s6.p">Меняет строку <code>column:</code> в файле и идёт дальше, пока не упрётся в колонку без следующей.</p></div></li>
+      <li><span class="num">7</span><div><h3 data-i18n="agent.s7.h">Оставляет след</h3><p data-i18n="agent.s7.p">Пишет 1-3 строки в «Ход работы» карточки и отчитывается: что сделано, какой коммит, какие карточки разблокированы.</p></div></li>
+    </ol>
+    <h3 class="sub" data-i18n="agent.roles">Пять субагентов</h3>
+    <dl class="roles">
+      <div class="panel"><dt><code>pumba-planner</code></dt><dd data-i18n="agent.ro1">план задачи или порядок карточек эпика, только чтение</dd></div>
+      <div class="panel"><dt><code>pumba-tester</code></dt><dd data-i18n="agent.ro2">тесты до реализации, приёмка, разбор упавших проверок</dd></div>
+      <div class="panel"><dt><code>pumba-worker</code></dt><dd data-i18n="agent.ro3">реализация по плану</dd></div>
+      <div class="panel"><dt><code>pumba-reviewer</code></dt><dd data-i18n="agent.ro4">ревью с серьёзностью замечаний, только чтение</dd></div>
+      <div class="panel"><dt><code>pumba-committer</code></dt><dd data-i18n="agent.ro5">один коммит по правилу «Стиль коммитов»</dd></div>
+    </dl>
+    <p class="note" data-i18n-html="agent.note">Субагентов запускает только основная сессия, исполнители никого не вызывают. Второй скилл, <code>pumba-new-card</code>, создаёт карточку с правильным номером и frontmatter по вашей просьбе.</p>
+    <p class="note warn" data-i18n-html="agent.never">Агент не удаляет карточки, не правит <code>board.json</code> и <code>AGENTS.md</code>, не делает push и слияние без прямой просьбы.</p>
+  </div>
+</section>
+
+<section class="sec" id="tools">
+  <div class="wrap">
+    <h2><span class="ico" data-icon="gear" aria-hidden="true"></span><span data-i18n="tools.h">Поддерживаемые инструменты</span></h2>
+    <p class="sec-lead" data-i18n-html="tools.p"><code>pumba install</code> кладёт пять агентов и два скилла в папки выбранного инструмента. Существующие файлы пропускаются.</p>
+    <div class="table-wrap">
+      <table class="tools">
+        <thead><tr><th scope="col" data-i18n="tools.col1">Инструмент</th><th scope="col" data-i18n="tools.col2">Что создаётся</th><th scope="col" data-i18n="tools.col3">Вызов</th><th scope="col" class="num-col" data-i18n="tools.col4">Файлов</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Claude Code<br><code>claude</code></th><td><code>.claude/agents/</code> <code>.claude/skills/</code></td><td><code>/pumba-task T-001</code></td><td class="num-col">7</td></tr>
+          <tr><th scope="row">OpenAI Codex<br><code>codex</code></th><td><code>.codex/agents/*.toml</code> <code>.agents/skills/</code></td><td><code>$pumba-task</code></td><td class="num-col">7</td></tr>
+          <tr><th scope="row">Cursor<br><code>cursor</code></th><td><code>.cursor/agents/</code> <code>.cursor/skills/</code> <code>.cursor/rules/pumba.mdc</code></td><td><code>/pumba-task</code></td><td class="num-col">8</td></tr>
+          <tr><th scope="row">GitHub Copilot<br><code>copilot</code></th><td><code>.github/agents/</code> <code>.github/skills/</code> <code>.github/instructions/pumba.instructions.md</code></td><td><code>/pumba-task</code></td><td class="num-col">8</td></tr>
+          <tr><th scope="row">OpenCode<br><code>opencode</code></th><td><code>.opencode/agents/</code> <code>.opencode/skills/</code> <code>.opencode/commands/</code></td><td><code>/pumba-task</code></td><td class="num-col">9</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note" data-i18n-html="tools.note">Если выбраны инструменты, которые читают папки друг друга (например, Claude Code и Cursor), установщик печатает предупреждение о возможных дублях скилла <code>pumba-task</code>. Выбор записывается в <code>board.json</code>.</p>
+  </div>
+</section>
+
+<section class="sec" id="keys">
+  <div class="wrap">
+    <h2><span class="ico" data-icon="card" aria-hidden="true"></span><span data-i18n="keys.h">Горячие клавиши</span></h2>
+    <p class="sec-lead" data-i18n-html="keys.p">Справка внутри программы открывается клавишей <kbd>?</kbd>. Русская раскладка (ЙЦУКЕН) работает.</p>
+    <div class="grid grid-3 keys">
+      <section class="panel"><h3 data-i18n="keys.g1">Карточки</h3><dl>
+        <div><dt><kbd>n</kbd></dt><dd data-i18n="key.n">новая задача</dd></div>
+        <div><dt><kbd>N</kbd></dt><dd data-i18n="key.N">новый эпик</dd></div>
+        <div><dt><kbd>Enter</kbd> <kbd>e</kbd></dt><dd data-i18n="key.enter">правка карточки</dd></div>
+        <div><dt><kbd>d</kbd></dt><dd data-i18n="key.d">в корзину</dd></div>
+        <div><dt><kbd>x</kbd></dt><dd data-i18n="key.x">скрыть / показать</dd></div>
+        <div><dt><kbd>p</kbd></dt><dd data-i18n="key.p">в спринт / из спринта</dd></div>
+        <div><dt><kbd>H</kbd> <kbd>L</kbd></dt><dd data-i18n="key.HL">в предыдущую / следующую колонку</dd></div>
+        <div><dt><kbd>J</kbd> <kbd>K</kbd></dt><dd data-i18n="key.JK">порядок вниз / вверх</dd></div>
+      </dl></section>
+      <section class="panel"><h3 data-i18n="keys.g2">Колонки</h3><dl>
+        <div><dt><kbd>c</kbd></dt><dd data-i18n="key.c">новая колонка (перед «Готово»)</dd></div>
+        <div><dt><kbd>r</kbd></dt><dd data-i18n="key.r">правка колонки и правила</dd></div>
+        <div><dt><kbd>X</kbd></dt><dd data-i18n="key.X">удалить колонку</dd></div>
+        <div><dt><kbd>Ctrl/Alt</kbd>+<kbd>←</kbd><kbd>→</kbd></dt><dd data-i18n="key.ctrl">колонку влево / вправо</dd></div>
+      </dl>
+      <h3 data-i18n="keys.g5">В формах</h3><dl>
+        <div><dt><kbd>Ctrl</kbd>+<kbd>S</kbd></dt><dd data-i18n="key.save">сохранить</dd></div>
+        <div><dt><kbd>Esc</kbd></dt><dd data-i18n="key.esc">отмена</dd></div>
+        <div><dt><kbd>Tab</kbd> <kbd>Shift</kbd>+<kbd>Tab</kbd></dt><dd data-i18n="key.tab">следующее / предыдущее поле</dd></div>
+      </dl></section>
+      <section class="panel"><h3 data-i18n="keys.g3">Вид</h3><dl>
+        <div><dt><kbd>h</kbd> <kbd>l</kbd></dt><dd data-i18n="key.hl">выбор колонки</dd></div>
+        <div><dt><kbd>j</kbd> <kbd>k</kbd></dt><dd data-i18n="key.jk">выбор карточки</dd></div>
+        <div><dt><kbd>v</kbd></dt><dd data-i18n="key.v">показать / скрыть скрытые</dd></div>
+        <div><dt><kbd>s</kbd></dt><dd data-i18n="key.s">фильтр: только спринт</dd></div>
+        <div><dt><kbd>?</kbd></dt><dd data-i18n="key.help">эта справка</dd></div>
+        <div><dt><kbd>q</kbd></dt><dd data-i18n="key.q">выход</dd></div>
+      </dl>
+      <h3 data-i18n="keys.g4">Проект</h3><dl>
+        <div><dt><kbd>]</kbd></dt><dd data-i18n="key.br">начать следующий спринт</dd></div>
+        <div><dt><kbd>P</kbd></dt><dd data-i18n="key.P">правила для агентов</dd></div>
+        <div><dt><kbd>M</kbd></dt><dd data-i18n="key.M">модели и уровни</dd></div>
+        <div><dt><kbd>@</kbd></dt><dd data-i18n="key.at">вставить ссылку на файл</dd></div>
+        <div><dt><kbd>B</kbd></dt><dd data-i18n="key.B">корзина (восстановить)</dd></div>
+        <div><dt><kbd>I</kbd></dt><dd data-i18n="key.I">агенты и скиллы (инструменты)</dd></div>
+      </dl></section>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-row">
+    <a class="btn" href="https://github.com/SWDevStudio/pumba-board" rel="noopener"><span class="ico" data-icon="star" aria-hidden="true"></span><span data-i18n="foot.src">Исходный код на GitHub</span></a>
+    <a href="#top" data-i18n="foot.up">Наверх</a>
+    <span class="dim">PUMBA BOARD</span>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

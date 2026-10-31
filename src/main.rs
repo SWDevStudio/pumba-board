@@ -1,14 +1,6 @@
-mod agents;
-mod app;
-mod cards;
-mod editor;
-mod files;
-mod form;
-mod install;
-mod logo;
-mod model;
-mod theme;
-mod ui;
+use pumba_core::model;
+use pumba_install::install;
+use pumba_tui::{app, ui};
 
 use install::{Tool, ToolInfo};
 use model::Store;

@@ -1,3 +1,6 @@
+[workspace]
+members = ["crates/*"]
+
 [package]
 name = "pumba-board"
 version = "0.1.0"
@@ -8,9 +11,10 @@ name = "pumba"
 path = "src/main.rs"
 
 [dependencies]
+pumba-core = { path = "crates/pumba-core" }
+pumba-install = { path = "crates/pumba-install" }
+pumba-tui = { path = "crates/pumba-tui" }
 ratatui = "0.30.2"
-serde = { version = "1.0.229", features = ["derive"] }
-serde_json = "1.0.154"
 
 [profile.release]
 opt-level = "z"

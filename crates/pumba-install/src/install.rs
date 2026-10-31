@@ -13,31 +13,31 @@ use std::path::Path;
 const CLAUDE_FILES: &[(&str, &str)] = &[
     (
         ".claude/agents/pumba-planner.md",
-        include_str!("../templates/agents/pumba-planner.md"),
+        include_str!("../../../templates/agents/pumba-planner.md"),
     ),
     (
         ".claude/agents/pumba-tester.md",
-        include_str!("../templates/agents/pumba-tester.md"),
+        include_str!("../../../templates/agents/pumba-tester.md"),
     ),
     (
         ".claude/agents/pumba-worker.md",
-        include_str!("../templates/agents/pumba-worker.md"),
+        include_str!("../../../templates/agents/pumba-worker.md"),
     ),
     (
         ".claude/agents/pumba-reviewer.md",
-        include_str!("../templates/agents/pumba-reviewer.md"),
+        include_str!("../../../templates/agents/pumba-reviewer.md"),
     ),
     (
         ".claude/agents/pumba-committer.md",
-        include_str!("../templates/agents/pumba-committer.md"),
+        include_str!("../../../templates/agents/pumba-committer.md"),
     ),
     (
         ".claude/skills/pumba-task/SKILL.md",
-        include_str!("../templates/skills/pumba-task/SKILL.md"),
+        include_str!("../../../templates/skills/pumba-task/SKILL.md"),
     ),
     (
         ".claude/skills/pumba-new-card/SKILL.md",
-        include_str!("../templates/skills/pumba-new-card/SKILL.md"),
+        include_str!("../../../templates/skills/pumba-new-card/SKILL.md"),
     ),
 ];
 
@@ -45,31 +45,31 @@ const CLAUDE_FILES: &[(&str, &str)] = &[
 const CODEX_FILES: &[(&str, &str)] = &[
     (
         ".agents/skills/pumba-new-card/SKILL.md",
-        include_str!("../templates/targets/codex/.agents/skills/pumba-new-card/SKILL.md"),
+        include_str!("../../../templates/targets/codex/.agents/skills/pumba-new-card/SKILL.md"),
     ),
     (
         ".agents/skills/pumba-task/SKILL.md",
-        include_str!("../templates/targets/codex/.agents/skills/pumba-task/SKILL.md"),
+        include_str!("../../../templates/targets/codex/.agents/skills/pumba-task/SKILL.md"),
     ),
     (
         ".codex/agents/pumba-committer.toml",
-        include_str!("../templates/targets/codex/.codex/agents/pumba-committer.toml"),
+        include_str!("../../../templates/targets/codex/.codex/agents/pumba-committer.toml"),
     ),
     (
         ".codex/agents/pumba-planner.toml",
-        include_str!("../templates/targets/codex/.codex/agents/pumba-planner.toml"),
+        include_str!("../../../templates/targets/codex/.codex/agents/pumba-planner.toml"),
     ),
     (
         ".codex/agents/pumba-reviewer.toml",
-        include_str!("../templates/targets/codex/.codex/agents/pumba-reviewer.toml"),
+        include_str!("../../../templates/targets/codex/.codex/agents/pumba-reviewer.toml"),
     ),
     (
         ".codex/agents/pumba-tester.toml",
-        include_str!("../templates/targets/codex/.codex/agents/pumba-tester.toml"),
+        include_str!("../../../templates/targets/codex/.codex/agents/pumba-tester.toml"),
     ),
     (
         ".codex/agents/pumba-worker.toml",
-        include_str!("../templates/targets/codex/.codex/agents/pumba-worker.toml"),
+        include_str!("../../../templates/targets/codex/.codex/agents/pumba-worker.toml"),
     ),
 ];
 
@@ -77,35 +77,35 @@ const CODEX_FILES: &[(&str, &str)] = &[
 const CURSOR_FILES: &[(&str, &str)] = &[
     (
         ".cursor/agents/pumba-committer.md",
-        include_str!("../templates/targets/cursor/.cursor/agents/pumba-committer.md"),
+        include_str!("../../../templates/targets/cursor/.cursor/agents/pumba-committer.md"),
     ),
     (
         ".cursor/agents/pumba-planner.md",
-        include_str!("../templates/targets/cursor/.cursor/agents/pumba-planner.md"),
+        include_str!("../../../templates/targets/cursor/.cursor/agents/pumba-planner.md"),
     ),
     (
         ".cursor/agents/pumba-reviewer.md",
-        include_str!("../templates/targets/cursor/.cursor/agents/pumba-reviewer.md"),
+        include_str!("../../../templates/targets/cursor/.cursor/agents/pumba-reviewer.md"),
     ),
     (
         ".cursor/agents/pumba-tester.md",
-        include_str!("../templates/targets/cursor/.cursor/agents/pumba-tester.md"),
+        include_str!("../../../templates/targets/cursor/.cursor/agents/pumba-tester.md"),
     ),
     (
         ".cursor/agents/pumba-worker.md",
-        include_str!("../templates/targets/cursor/.cursor/agents/pumba-worker.md"),
+        include_str!("../../../templates/targets/cursor/.cursor/agents/pumba-worker.md"),
     ),
     (
         ".cursor/rules/pumba.mdc",
-        include_str!("../templates/targets/cursor/.cursor/rules/pumba.mdc"),
+        include_str!("../../../templates/targets/cursor/.cursor/rules/pumba.mdc"),
     ),
     (
         ".cursor/skills/pumba-new-card/SKILL.md",
-        include_str!("../templates/targets/cursor/.cursor/skills/pumba-new-card/SKILL.md"),
+        include_str!("../../../templates/targets/cursor/.cursor/skills/pumba-new-card/SKILL.md"),
     ),
     (
         ".cursor/skills/pumba-task/SKILL.md",
-        include_str!("../templates/targets/cursor/.cursor/skills/pumba-task/SKILL.md"),
+        include_str!("../../../templates/targets/cursor/.cursor/skills/pumba-task/SKILL.md"),
     ),
 ];
 
@@ -113,35 +113,35 @@ const CURSOR_FILES: &[(&str, &str)] = &[
 const COPILOT_FILES: &[(&str, &str)] = &[
     (
         ".github/agents/pumba-committer.agent.md",
-        include_str!("../templates/targets/copilot/.github/agents/pumba-committer.agent.md"),
+        include_str!("../../../templates/targets/copilot/.github/agents/pumba-committer.agent.md"),
     ),
     (
         ".github/agents/pumba-planner.agent.md",
-        include_str!("../templates/targets/copilot/.github/agents/pumba-planner.agent.md"),
+        include_str!("../../../templates/targets/copilot/.github/agents/pumba-planner.agent.md"),
     ),
     (
         ".github/agents/pumba-reviewer.agent.md",
-        include_str!("../templates/targets/copilot/.github/agents/pumba-reviewer.agent.md"),
+        include_str!("../../../templates/targets/copilot/.github/agents/pumba-reviewer.agent.md"),
     ),
     (
         ".github/agents/pumba-tester.agent.md",
-        include_str!("../templates/targets/copilot/.github/agents/pumba-tester.agent.md"),
+        include_str!("../../../templates/targets/copilot/.github/agents/pumba-tester.agent.md"),
     ),
     (
         ".github/agents/pumba-worker.agent.md",
-        include_str!("../templates/targets/copilot/.github/agents/pumba-worker.agent.md"),
+        include_str!("../../../templates/targets/copilot/.github/agents/pumba-worker.agent.md"),
     ),
     (
         ".github/instructions/pumba.instructions.md",
-        include_str!("../templates/targets/copilot/.github/instructions/pumba.instructions.md"),
+        include_str!("../../../templates/targets/copilot/.github/instructions/pumba.instructions.md"),
     ),
     (
         ".github/skills/pumba-new-card/SKILL.md",
-        include_str!("../templates/targets/copilot/.github/skills/pumba-new-card/SKILL.md"),
+        include_str!("../../../templates/targets/copilot/.github/skills/pumba-new-card/SKILL.md"),
     ),
     (
         ".github/skills/pumba-task/SKILL.md",
-        include_str!("../templates/targets/copilot/.github/skills/pumba-task/SKILL.md"),
+        include_str!("../../../templates/targets/copilot/.github/skills/pumba-task/SKILL.md"),
     ),
 ];
 
@@ -149,39 +149,39 @@ const COPILOT_FILES: &[(&str, &str)] = &[
 const OPENCODE_FILES: &[(&str, &str)] = &[
     (
         ".opencode/agents/pumba-committer.md",
-        include_str!("../templates/targets/opencode/.opencode/agents/pumba-committer.md"),
+        include_str!("../../../templates/targets/opencode/.opencode/agents/pumba-committer.md"),
     ),
     (
         ".opencode/agents/pumba-planner.md",
-        include_str!("../templates/targets/opencode/.opencode/agents/pumba-planner.md"),
+        include_str!("../../../templates/targets/opencode/.opencode/agents/pumba-planner.md"),
     ),
     (
         ".opencode/agents/pumba-reviewer.md",
-        include_str!("../templates/targets/opencode/.opencode/agents/pumba-reviewer.md"),
+        include_str!("../../../templates/targets/opencode/.opencode/agents/pumba-reviewer.md"),
     ),
     (
         ".opencode/agents/pumba-tester.md",
-        include_str!("../templates/targets/opencode/.opencode/agents/pumba-tester.md"),
+        include_str!("../../../templates/targets/opencode/.opencode/agents/pumba-tester.md"),
     ),
     (
         ".opencode/agents/pumba-worker.md",
-        include_str!("../templates/targets/opencode/.opencode/agents/pumba-worker.md"),
+        include_str!("../../../templates/targets/opencode/.opencode/agents/pumba-worker.md"),
     ),
     (
         ".opencode/commands/pumba-new-card.md",
-        include_str!("../templates/targets/opencode/.opencode/commands/pumba-new-card.md"),
+        include_str!("../../../templates/targets/opencode/.opencode/commands/pumba-new-card.md"),
     ),
     (
         ".opencode/commands/pumba-task.md",
-        include_str!("../templates/targets/opencode/.opencode/commands/pumba-task.md"),
+        include_str!("../../../templates/targets/opencode/.opencode/commands/pumba-task.md"),
     ),
     (
         ".opencode/skills/pumba-new-card/SKILL.md",
-        include_str!("../templates/targets/opencode/.opencode/skills/pumba-new-card/SKILL.md"),
+        include_str!("../../../templates/targets/opencode/.opencode/skills/pumba-new-card/SKILL.md"),
     ),
     (
         ".opencode/skills/pumba-task/SKILL.md",
-        include_str!("../templates/targets/opencode/.opencode/skills/pumba-task/SKILL.md"),
+        include_str!("../../../templates/targets/opencode/.opencode/skills/pumba-task/SKILL.md"),
     ),
 ];
 

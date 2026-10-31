@@ -1,9 +1,9 @@
 //! Generic modal form: text fields and option selectors. No drawing here.
-use crate::agents::{self, AgentRef};
+use pumba_install::agents::{self, AgentRef};
 use crate::cards::{self, CardRef};
 use crate::editor::TextBuf;
 use crate::files::FileIndex;
-use crate::model::Kind;
+use pumba_core::model::Kind;
 use ratatui::layout::Rect;
 use ratatui::crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use std::rc::Rc;
@@ -837,7 +837,7 @@ mod tests {
             Field { key: "agent".into(), label: "A".into(), kind: FieldKind::Text(TextBuf::new("", false)), side: true, suggest: Suggest::Agents },
             Field { key: "next".into(), label: "X".into(), kind: FieldKind::Select { opts, idx: 0 }, side: true, suggest: Suggest::None },
         ]);
-        f.agents = Rc::new(crate::agents::scan(&root, None));
+        f.agents = Rc::new(pumba_install::agents::scan(&root, None));
         let _ = std::fs::remove_dir_all(&root);
         f.focus = 1;
         f

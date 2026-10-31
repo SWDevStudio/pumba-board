@@ -1,5 +1,5 @@
 //! Card suggestions for the dependency field: search by id, title, description or column name.
-use crate::model::Kind;
+use pumba_core::model::Kind;
 
 /// A card as the suggestion popup sees it. Lowercased copies are kept for matching.
 #[derive(Clone, Debug, PartialEq, Eq)]

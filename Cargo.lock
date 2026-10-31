@@ -935,9 +935,31 @@ dependencies = [
 name = "pumba-board"
 version = "0.1.0"
 dependencies = [
+ "pumba-core",
+ "pumba-install",
+ "pumba-tui",
  "ratatui",
+]
+
+[[package]]
+name = "pumba-core"
+version = "0.1.0"
+dependencies = [
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "pumba-install"
+version = "0.1.0"
+
+[[package]]
+name = "pumba-tui"
+version = "0.1.0"
+dependencies = [
+ "pumba-core",
+ "pumba-install",
+ "ratatui",
 ]
 
 [[package]]

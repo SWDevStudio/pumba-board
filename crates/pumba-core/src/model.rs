@@ -792,7 +792,7 @@ mod tests {
         }
         assert_eq!(cfg.columns.last().unwrap().id, "done");
         // the agents named by the columns are shipped in the template pack
-        let agents = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("templates/agents");
+        let agents = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../templates/agents");
         for c in cfg.columns.iter().filter(|c| !c.agent.is_empty()) {
             assert!(agents.join(format!("{}.md", c.agent)).is_file(), "{}", c.agent);
         }
@@ -837,7 +837,7 @@ mod tests {
     #[test]
     fn readme_json_matches_default_columns() {
         // templates/README.md carries the pasteable JSON of the default columns: it must match exactly
-        let readme = include_str!("../templates/README.md").replace("\r\n", "\n");
+        let readme = include_str!("../../../templates/README.md").replace("\r\n", "\n");
         let start = readme.find("```json\n").expect("json block") + "```json\n".len();
         let end = start + readme[start..].find("```").unwrap();
         let cols: Vec<Column> = serde_json::from_str(&readme[start..end]).expect("README json parses");
