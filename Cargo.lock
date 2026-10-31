@@ -939,6 +939,8 @@ dependencies = [
  "pumba-install",
  "pumba-tui",
  "ratatui",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

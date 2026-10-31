@@ -1,3 +1,5 @@
+mod cli;
+
 use pumba_core::model;
 use pumba_install::install;
 use pumba_tui::{app, ui};
@@ -21,6 +23,8 @@ const USAGE: &str = "pumba: канбан-доска для задач ИИ-аг�
                                              ИИ-инструментов
     pumba install-claude [--force] [ПУТЬ]
                                              то же, что install --tools claude
+    pumba brief|move|note|rules|unblocks|column|rules-hash ...
+                                             команды для агентов (ниже)
 
 АРГУМЕНТЫ:
     ПУТЬ    каталог проекта (по умолчанию текущий). Доска лежит в ПУТЬ/.pumba/
@@ -50,8 +54,17 @@ const USAGE: &str = "pumba: канбан-доска для задач ИИ-аг�
     -h, --help          показать эту справку
     -V, --version       показать версию";
 
+/// Справка: интерфейс доски, затем команды для агентов.
+fn print_help() {
+    println!("{USAGE}\n\n{}", cli::USAGE);
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
+    // команды для агентов главнее пути: `pumba brief` не откроет папку brief (для неё: `pumba ./brief`)
+    if let Some(code) = cli::run(&args) {
+        std::process::exit(code);
+    }
     match args.first().map(String::as_str) {
         Some("install-claude") => std::process::exit(cmd_install(&args[1..], true)),
         Some("install") => std::process::exit(cmd_install(&args[1..], false)),
@@ -62,7 +75,7 @@ fn main() {
     for a in args {
         match a.as_str() {
             "-h" | "--help" => {
-                println!("{USAGE}");
+                print_help();
                 return;
             }
             "-V" | "--version" => {
@@ -173,7 +186,7 @@ fn parse_sub(sub: Sub, args: &[String]) -> Result<SubOpts, ParseErr> {
 fn parse_or_exit(sub: Sub, args: &[String]) -> Result<SubOpts, i32> {
     parse_sub(sub, args).map_err(|e| match e {
         ParseErr::Help => {
-            println!("{USAGE}");
+            print_help();
             0
         }
         ParseErr::Bad(m) => {

@@ -340,6 +340,25 @@ pub fn fmt_utc(secs: u64) -> String {
 
 // ----------------------------------------------------------------- store
 
+/// Write `data` to `path` through a temporary file in the same folder and a rename, so a reader
+/// (the TUI, an agent) never sees a half-written file. `fs::rename` replaces an existing file on
+/// Windows too; if it still refuses, the old file is removed and the rename is tried once more.
+pub fn write_atomic(path: &Path, data: &[u8]) -> std::io::Result<()> {
+    use std::sync::atomic::{AtomicU64, Ordering};
+    static N: AtomicU64 = AtomicU64::new(0);
+    let name = path.file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_default();
+    // the suffix is not `.md`, so a half-finished temp file is never taken for a card
+    let tmp = path.with_file_name(format!("{name}.tmp{}-{}", std::process::id(), N.fetch_add(1, Ordering::Relaxed)));
+    fs::write(&tmp, data)?;
+    if fs::rename(&tmp, path).is_ok() {
+        return Ok(());
+    }
+    let _ = fs::remove_file(path);
+    fs::rename(&tmp, path).inspect_err(|_| {
+        let _ = fs::remove_file(&tmp);
+    })
+}
+
 pub struct Store {
     pub dir: PathBuf,
 }
@@ -450,18 +469,18 @@ impl Store {
     }
 
     pub fn save_config(&self, cfg: &Config) -> Res<()> {
-        fs::write(self.dir.join("board.json"), serde_json::to_string_pretty(cfg)? + "\n")?;
+        write_atomic(&self.dir.join("board.json"), (serde_json::to_string_pretty(cfg)? + "\n").as_bytes())?;
         Ok(())
     }
 
     pub fn save_task(&self, t: &Task) -> Res<()> {
         fs::create_dir_all(self.tasks_dir())?;
-        fs::write(self.tasks_dir().join(format!("{}.md", t.id)), t.to_md())?;
+        write_atomic(&self.tasks_dir().join(format!("{}.md", t.id)), t.to_md().as_bytes())?;
         Ok(())
     }
 
     pub fn write_agents(&self, cfg: &Config, tasks: &[Task]) -> Res<()> {
-        fs::write(self.dir.join("AGENTS.md"), agents_md(cfg, tasks))?;
+        write_atomic(&self.dir.join("AGENTS.md"), agents_md(cfg, tasks).as_bytes())?;
         Ok(())
     }
 
@@ -490,7 +509,9 @@ impl Store {
 pub fn agents_md(cfg: &Config, tasks: &[Task]) -> String {
     let mut s = String::new();
     s += "# Доска Pumba: инструкции для ИИ-агентов\n\n";
-    s += "<!-- Создано pumba при каждом изменении. Не редактируйте вручную, используйте TUI. -->\n\n";
+    s += "<!-- Создано pumba при каждом изменении. Не редактируйте вручную, используйте TUI. -->\n";
+    // fingerprint of the rules (`pumba rules-hash`): a changed value tells scripts and agents to read the rules again
+    s += &format!("<!-- pumba-rules-hash: {} · protocol {} -->\n\n", crate::rulehash::rules_hash(cfg), crate::rulehash::PROTOCOL);
     s += "В этом репозитории работа ведётся на канбан-доске, которая хранится в `.pumba/`.\n\n";
     s += "## Протокол\n\n";
     s += "1. Когда пользователь называет id задачи или эпика (`T-001`, `E-001`) или просит поработать над ней, прочитай `.pumba/tasks/<id>.md`.\n";
@@ -673,6 +694,32 @@ mod tests {
         assert!(md.contains("7. Ссылки вида `@путь/к/файлу`") && md.contains("относительно корня репозитория"));
         assert!(md.contains("| id | тип | колонка | спринт | depends | blocks | название |"));
         assert!(md.contains("9. Колонка `blocks`") && md.contains("разблокирует") && md.contains("Не редактируй чужие `depends:`"));
+    }
+
+    #[test]
+    fn agents_md_has_rules_hash_line() {
+        let mut cfg = Config::default();
+        let line = format!("<!-- pumba-rules-hash: {} · protocol {} -->", crate::rulehash::rules_hash(&cfg), crate::rulehash::PROTOCOL);
+        let md = agents_md(&cfg, &[]);
+        assert!(md.contains(&line), "{md}");
+        // near the top, before the protocol
+        assert!(md.find(&line).unwrap() < md.find("## Протокол").unwrap());
+        // follows the rules, not the card index
+        cfg.columns[1].after.push_str(" ещё");
+        assert!(!agents_md(&cfg, &[]).contains(&line));
+    }
+
+    #[test]
+    fn write_atomic_replaces_and_leaves_no_temp() {
+        let dir = std::env::temp_dir().join(format!("pumba-atomic-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir).unwrap();
+        let p = dir.join("x.md");
+        write_atomic(&p, b"one").unwrap();
+        write_atomic(&p, b"two").unwrap();
+        assert_eq!(fs::read_to_string(&p).unwrap(), "two");
+        assert_eq!(fs::read_dir(&dir).unwrap().count(), 1);
+        let _ = fs::remove_dir_all(&dir);
     }
 
     #[test]

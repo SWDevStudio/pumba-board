@@ -101,6 +101,7 @@ Without `--tools`, `init` in a terminal asks a question with a list: answer with
 | `pumba install [--tools LIST] [--force] [PATH]` | installs or updates only the agents and skills |
 | `pumba install-claude [--force] [PATH]` | same as `install --tools claude` |
 | `pumba --help`, `pumba --version` | help and version |
+| `pumba brief`, `move`, `note`, `rules`, `unblocks`, `column`, `rules-hash` | commands for agents, they do not open the board (see “CLI commands for agents” in section 9) |
 
 `PATH` is the project directory, the current one by default. The board is searched for upwards from it. Valid tool ids: `claude`, `codex`, `cursor`, `copilot`, `opencode`, or `all`.
 
@@ -457,7 +458,7 @@ You can invoke the skill explicitly: `/pumba-task T-001` (`$pumba-task` in Codex
 2. **Before work**: it checks the conditions and warns or asks. If the rule says stop, the agent stops without moving the card.
 3. **Work**: it starts the column's executor (the `agent` field) and any helper subagents in the order the “Work” text names. With no executor, it does the work itself. If a needed subagent is missing in the project, it stops and names it.
 4. **After work**: it verifies the result itself, not on trust: runs the checks, reads the executor's `ИТОГ:` line, looks at the last commit. On failure it retries on a stronger model up the ladder `haiku → sonnet → opus`, one attempt per step. If `opus` fails or a human is needed, the card goes to “Ждёт разработчика”.
-5. It moves the card (changes the `column:` line) to the right column and returns to step 1.
+5. It moves the card to the right column (with `pumba move`, or by changing the `column:` line when the command is missing) and returns to step 1.
 
 **Stops.** The loop ends when:
 
@@ -486,6 +487,110 @@ You can invoke the skill explicitly: `/pumba-task T-001` (`$pumba-task` in Codex
 ### The `pumba-new-card` skill
 
 It creates a card as the file `.pumba/tasks/<ID>.md` at your request. Before creating, it checks for duplicate titles (the trash included), that the parent exists and is an epic, that the dependencies exist and form no cycles, and that the column exists in `board.json`. The id is the maximum among all files, the trash included, plus one. If a dependency is not done yet, it tells you that the new card is blocked. It does not start work on the new card until you ask.
+
+### CLI commands for agents
+
+Besides the interface, the program has a few commands for agents. They ask no questions and do not open the board; they print short text (with `--json`, one JSON object). Under the `pumba-task` skill the driver calls one command instead of several file reads and edits: fewer calls, less text in the context. `--root PATH` sets where to search upwards for `.pumba/`; without it the search starts in the current folder.
+
+| Command | What it does |
+|---|---|
+| `pumba brief ID [--known PARTS] [--body head\|full\|none]` | everything for a driver step: card status, fields, the column with the three parts of its rule, dependencies, rule labels, hashes, recent moves, the start of the body |
+| `pumba move ID COLUMN\|next [--expect-from COLUMN] [--note "TEXT"] [--user-approved]` | moves the card to the end of a column and appends a note under `## Ход работы` |
+| `pumba note ID "TEXT" [--user-approved]` | appends a note under `## Ход работы` |
+| `pumba rules [--part ID]` | “Project rules” and “Custom rules” as one block, which the driver pastes into the subagent's task |
+| `pumba unblocks ID` | which cards wait for this one and what will happen to them |
+| `pumba column COLUMN` | one column: the three rule parts, executor, next column |
+| `pumba rules-hash [--parts]` | a fingerprint of the rules (12 characters) |
+
+There are no commands for creating cards, listing them or running scripts: new cards are still created by the `pumba-new-card` skill.
+
+The first line of `brief` is the status: `OK`, `BLOCKED`, `DELETED` (trash), `NO-PIPELINE` (no column has an executor or a next column), `UNKNOWN-COLUMN` (the card's column is not on the board). This is the answer for a card that waits for an unfinished dependency (a demo board with two tasks, T-002 depends on T-001; exit code 5). The demo board is in Russian, so the output is too:
+
+```
+$ pumba brief T-002
+BLOCKED T-001 «Бэклог» (backlog)
+T-002 task «slugify убирает знаки препинания и схлопывает дефисы» sprint=1 model=sonnet effort=medium api=1
+col=backlog «Бэклог» (1/5) agent=- next=- last=done
+parent=E-001 «Надёжные текстовые утилиты» backlog | depends: T-001 backlog ✗ | dependents: -
+board=auto commits=conventional branching=per-task merge=squash tests=required autonomy=ask
+hash rules=37cc79b9b0cb col:backlog=b60f4f3fad09
+log: -; visits=0
+pumba: T-002 BLOCKED (5)
+```
+
+On such an answer the agent refuses under the hard rule and names the blocking cards. For an unblocked card the first lines are the same, followed by the non-empty rule parts of the column (“Before work”, “Work”, “After work”) verbatim and the card body (omitted here):
+
+```
+$ pumba move T-001 in-progress --note "пользователь подтвердил"
+T-001: backlog → in-progress
+$ pumba brief T-001 --body none
+OK T-001 task «word_count считает пустые элементы при нескольких пробелах» sprint=1 model=sonnet effort=low api=1
+col=in-progress «В работе» (2/5) agent=pumba-worker next=review «На ревью» last=done
+parent=E-001 «Надёжные текстовые утилиты» backlog | depends: - | dependents: T-002
+board=auto commits=conventional branching=per-task merge=squash tests=required autonomy=ask
+hash rules=37cc79b9b0cb col:in-progress=1cc328b29636
+log: 2026-10-31 18:00 UTC «Бэклог»→«В работе»; visits=1
+## Работа
+(the column rule text)
+```
+
+On later loop rounds the agent passes the hashes from the `hash` line and the parts it has already seen are not repeated:
+
+```
+$ pumba brief T-001 --body none --known rules=37cc79b9b0cb,col:in-progress=1cc328b29636
+OK T-001 task «word_count считает пустые элементы при нескольких пробелах» sprint=1 model=sonnet effort=low api=1
+col=in-progress «В работе» (2/5) agent=pumba-worker next=review «На ревью» last=done
+parent=E-001 «Надёжные текстовые утилиты» backlog | depends: - | dependents: T-002
+board=auto
+hash rules=37cc79b9b0cb col:in-progress=1cc328b29636
+known: col:in-progress, rules
+log: 2026-10-31 18:00 UTC «Бэклог»→«В работе»; visits=1
+```
+
+The other commands answer in one line:
+
+```
+$ pumba note T-001 "план готов, тесты написаны"
+T-001: заметка добавлена
+$ pumba unblocks T-001
+T-002 «slugify убирает знаки препинания и схлопывает дефисы» — разблокируется, когда T-001 дойдёт до «Готово»
+$ pumba move T-001 next --expect-from in-progress --note "проверки зелёные"
+T-001: in-progress → review
+$ pumba rules-hash
+37cc79b9b0cb
+```
+
+`--expect-from` guards against a parallel edit: if the card is no longer in the named column, `move` writes nothing and exits with code 6. A move forward over unfinished dependencies is also refused (code 5).
+
+With manual board updates, the write commands without `--user-approved` write nothing, exit with code 7 and print a ready phrase for the user:
+
+```
+$ pumba move T-001 in-progress
+Обновление доски: «Вручную». Предложи пользователю:
+«Перенести T-001 «word_count считает пустые элементы при нескольких пробелах» из «Бэклог» в «В работе». Сделать? (да/нет)»
+После его явного «да» повтори команду с --user-approved.
+pumba: доска в ручном режиме: без согласия пользователя не пишу (нужен --user-approved) (7)
+```
+
+The agent adds `--user-approved` only after an explicit “yes” from the user.
+
+**Exit codes**
+
+| Code | Meaning |
+|---|---|
+| 0 | success (including “already so”) |
+| 1 | I/O error |
+| 2 | wrong arguments |
+| 3 | no such card, column or next column |
+| 4 | the card is in the trash |
+| 5 | blocked by dependencies |
+| 6 | write conflict or `--expect-from` did not match |
+| 7 | forbidden by the manual board mode (`--user-approved` needed) |
+| 9 | no board, or `board.json` cannot be read |
+
+**Agent scripts.** If the agent repeats the same sequence of commands three times in a row (for example, the checks before a commit), it saves it as `.pumba/scripts/<name>.sh` (`.ps1` on Windows) with a comment header: `# pumba-script: <name>`, `# purpose: …`, `# usage: …`, `# pumba-rules-hash: <output of pumba rules-hash>`. Before running a script the agent compares the hash in the header with the output of `pumba rules-hash`. If they differ, the board rules have changed: the agent re-reads the parts it needs (`pumba rules`, `pumba column ID`) and rewrites or deletes the script instead of running the old one. A script only reads and runs the project's checks, does not edit `.pumba/` around the commands, and contains nothing irreversible (`push`, `reset`, deleting files). The program does not read this folder and does not create or run scripts itself.
+
+**If `pumba` is not in PATH.** Once per session the agent checks `pumba --help`. If the command is missing, or the help has no `pumba brief` (an older version), the agent follows the manual protocol described above, which stays complete. The commands speed the work up but do not replace the protocol.
 
 ## 10. A worked example: from an empty folder to a closed task
 
