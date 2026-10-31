@@ -42,6 +42,12 @@ Pumba Board это программа на Rust с интерфейсом в т�
 
 ## 2. Установка
 
+### Готовый бинарник
+
+На странице [Releases](https://github.com/SWDevStudio/pumba-board/releases) лежат сборки для Windows (`x86_64-pc-windows-msvc`, `.zip`) и Linux (`x86_64-unknown-linux-musl`, `.tar.gz`, статическая, без зависимостей). Распакуйте архив и положите `pumba` в папку из `PATH`. Рядом с каждым архивом есть файл `.sha256` с контрольной суммой.
+
+### Из исходников
+
 Нужен Rust. В `Cargo.toml` указана редакция 2024, поэтому подойдёт Rust 1.85 или новее.
 
 ```bash

@@ -1,0 +1,76 @@
+name: release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            ext: zip
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+            ext: tar.gz
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install musl tools
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt-get update && sudo apt-get install -y musl-tools
+      - name: Add target
+        run: rustup target add ${{ matrix.target }}
+      - name: Test
+        run: cargo test --workspace --target ${{ matrix.target }}
+      - name: Build
+        run: cargo build --release --target ${{ matrix.target }}
+      - name: Package (windows)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          $name = "pumba-${{ github.ref_name }}-${{ matrix.target }}"
+          New-Item -ItemType Directory $name | Out-Null
+          Copy-Item target/${{ matrix.target }}/release/pumba.exe $name/
+          Copy-Item README.md, README.en.md $name/
+          Compress-Archive -Path $name -DestinationPath "$name.zip"
+          (Get-FileHash "$name.zip" -Algorithm SHA256).Hash.ToLower() + "  $name.zip" | Out-File -Encoding ascii "$name.zip.sha256"
+          "ASSET=$name.zip" | Out-File -Append -Encoding ascii $env:GITHUB_ENV
+      - name: Package (linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          name="pumba-${{ github.ref_name }}-${{ matrix.target }}"
+          mkdir "$name"
+          cp target/${{ matrix.target }}/release/pumba README.md README.en.md "$name/"
+          tar -czf "$name.tar.gz" "$name"
+          sha256sum "$name.tar.gz" > "$name.tar.gz.sha256"
+          echo "ASSET=$name.tar.gz" >> "$GITHUB_ENV"
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}
+          path: |
+            ${{ env.ASSET }}
+            ${{ env.ASSET }}.sha256
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ github.ref_name }}" dist/* \
+            --repo "${{ github.repository }}" \
+            --title "Pumba Board ${{ github.ref_name }}" \
+            --notes "Канбан-TUI для задач ИИ-агентов. Скачайте архив для своей системы, распакуйте и положите pumba в PATH. Windows: pumba-*-x86_64-pc-windows-msvc.zip. Linux (статический, без зависимостей): pumba-*-x86_64-unknown-linux-musl.tar.gz. Контрольные суммы в файлах .sha256. Описание: README.md."

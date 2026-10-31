@@ -43,6 +43,12 @@ Worth knowing up front:
 
 ## 2. Installation
 
+### Prebuilt binary
+
+The [Releases](https://github.com/SWDevStudio/pumba-board/releases) page has builds for Windows (`x86_64-pc-windows-msvc`, `.zip`) and Linux (`x86_64-unknown-linux-musl`, `.tar.gz`, static, no dependencies). Unpack the archive and put `pumba` in a folder on your `PATH`. Each archive comes with a `.sha256` checksum file.
+
+### From source
+
 You need Rust. `Cargo.toml` uses edition 2024, so Rust 1.85 or newer works.
 
 ```bash
