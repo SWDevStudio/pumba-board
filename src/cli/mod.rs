@@ -8,7 +8,7 @@ use std::path::PathBuf;
 mod read;
 mod write;
 
-/// Commands of the first release. They win over a folder name: a project folder with such a
+/// Board commands. They win over a folder name: a project folder with such a
 /// name is opened as `pumba ./brief`.
 pub const SUBCOMMANDS: &[&str] = &["brief", "move", "note", "rules", "unblocks", "column", "rules-hash"];
 
