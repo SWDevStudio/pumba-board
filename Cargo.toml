@@ -1,0 +1,19 @@
+[package]
+name = "pumba-board"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "pumba"
+path = "src/main.rs"
+
+[dependencies]
+ratatui = "0.30.2"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+strip = true
